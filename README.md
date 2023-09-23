@@ -14,6 +14,7 @@ Vue.js Project with Tailwind CSS and Flow Bite UI Library
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
 - [Testing](#testing)
+- [Usage](#usage)
 
 ## Getting Started
 
@@ -72,4 +73,30 @@ But it's still recommended to test the production build with `test:e2e` before d
 ```sh
 npm run build
 npm run test:e2e
+```
+
+## Usage
+
+Folder structure
+
+```sh
+  src/
+  |-- assets/
+  | |-- images/
+  | |-- styles/
+  | |-- fonts/
+  |-- components/
+  | |-- elements/ - molecules
+  | |-- layout/ - organisms
+  | |-- modules/ - organisms + template
+  |-- plugins/
+  |-- router/
+  | |-- index.js
+  |-- store/
+  |-- services/
+  |-- utils/
+  |-- views/
+  |-- App.vue
+  |-- main.js
+
 ```
