@@ -37,7 +37,7 @@ class AuthService {
       })
   }
   signout() {
-    return api.post('auth/signout').then((response) => {
+    return api.delete('auth/signout').then((response) => {
       if (response.data) {
         storageService.deleteCookie('rfc7519')
         storageService.deleteCookie('user')

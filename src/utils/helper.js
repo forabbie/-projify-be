@@ -18,7 +18,11 @@ export function b64_to_utf8(str) {
 }
 
 export function getUserID() {
-  const token = StorageService.getCookie('token').access_token || null
+  const token = StorageService.getCookie('rfc7519').access_token || null
   const userID = token ? JSON.parse(token) : { sub: null }
   return userID
+}
+
+export function isAuthenticated() {
+  return StorageService.getLocalStorage('auth') && StorageService.getCookie('rfc7519')
 }
