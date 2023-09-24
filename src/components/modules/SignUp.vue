@@ -34,52 +34,67 @@
     >
       <p class="mx-4 mb-0 text-center font-semibold dark:text-neutral-200">Or</p>
     </div>
-    <form class="space-y-4 md:space-y-6" action="#">
-      <div>
-        <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-          >Your email</label
-        >
-        <input
-          type="email"
-          name="email"
-          id="email"
-          class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          placeholder="name@company.com"
-        />
+    <vee-form class="space-y-4 md:space-y-6" :validation-schema="schema" @submit="register">
+      <div
+        class="text-white text-center font-bold p-4 mb-4"
+        v-if="reg_show_alert"
+        :class="reg_alert_variant"
+      >
+        {{ reg_alert_msg }}
       </div>
-      <div>
-        <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-          >Password</label
-        >
-        <input
-          type="password"
-          name="password"
-          id="password"
-          placeholder="••••••••"
-          class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-        />
-      </div>
-      <div>
-        <label
-          for="confirm-password"
-          class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-          >Confirm password</label
-        >
-        <input
-          type="confirm-password"
-          name="confirm-password"
-          id="confirm-password"
-          placeholder="••••••••"
-          class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-        />
-      </div>
+      <FieldInputGroup>
+        <template #label>
+          <FieldInputLabel :label="'Email'" :label_for="'email'" />
+        </template>
+        <template #field>
+          <vee-field
+            type="email"
+            name="email"
+            id="email"
+            placeholder="name@company.com"
+            :class="fieldClass"
+          />
+        </template>
+        <template #error>
+          <ErrorMessage class="text-red-600" name="email" />
+        </template>
+      </FieldInputGroup>
+      <FieldInputGroup>
+        <template #label>
+          <FieldInputLabel :label="'Password'" :label_for="'Password'" />
+        </template>
+        <template #field>
+          <vee-field name="password" :bails="false" v-slot="{ field, errors }">
+            <input type="password" placeholder="••••••••" :class="fieldClass" v-bind="field" />
+            <div class="text-red-600" v-for="error in errors" :key="error">
+              {{ error }}
+            </div>
+          </vee-field>
+        </template>
+      </FieldInputGroup>
+      <FieldInputGroup>
+        <template #label>
+          <FieldInputLabel :label="'Confirm password'" :label_for="'confirm-password'" />
+        </template>
+        <template #field>
+          <vee-field
+            name="confirm_password"
+            type="password"
+            placeholder="••••••••"
+            :class="fieldClass"
+          />
+        </template>
+        <template #error>
+          <ErrorMessage class="text-red-600" name="confirm_password" />
+        </template>
+      </FieldInputGroup>
       <button
         type="submit"
         class="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
       >
         Create an account
       </button>
-    </form>
+    </vee-form>
     <p class="text-sm font-light text-gray-500 dark:text-gray-400">
       Already have an account?
       <router-link
@@ -91,4 +106,57 @@
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import useAuthStore from '@/stores/auth'
+import storageService from '@/utils/storage'
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+
+import FieldInputGroup from '@/components/elements/FieldInputGroup.vue'
+// import FieldInput from '@/components/elements/FieldInput.vue'
+import FieldInputLabel from '@/components/elements/FieldInputLabel.vue'
+
+const authStore = useAuthStore()
+const router = useRouter()
+
+const fieldClass = ref(
+  'bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+)
+
+const schema = {
+  email: 'required|min:3|max:100|email',
+  password: 'required|min:9|max:100|excluded:password',
+  confirm_password: 'password_mismatch:@password'
+}
+const reg_in_submission = ref(false)
+const reg_show_alert = ref(false)
+const reg_alert_variant = ref('bg-blue-500')
+const reg_alert_msg = ref('Please wait! Your account is being created.')
+
+const register = async (values) => {
+  reg_show_alert.value = true
+  reg_in_submission.value = true
+  reg_alert_variant.value = 'bg-blue-500'
+  reg_alert_msg.value = 'Please wait! Your account is being created.'
+
+  try {
+    await authStore.signup(values)
+    reg_alert_variant.value = 'bg-green-500'
+    reg_alert_msg.value = 'Success! Your account has been created.'
+    storageService.setLocalStorage('auth', true)
+    router.push({ name: 'Dashboard' })
+  } catch (error) {
+    console.log('error:', error.response)
+    if (error.response.status === 422) {
+      reg_in_submission.value = false
+      reg_alert_variant.value = 'bg-red-500'
+      reg_alert_msg.value = error.response.data.status.message
+      return
+    }
+    reg_in_submission.value = false
+    reg_alert_variant.value = 'bg-red-500'
+    reg_alert_msg.value = 'An unexpected error occured. Please try again later.'
+    return
+  }
+}
+</script>

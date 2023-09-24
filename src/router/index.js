@@ -1,19 +1,21 @@
 import { createRouter, createWebHistory } from 'vue-router'
-// import storageService from '@/services/storage.service'
+import storageService from '@/utils/storage'
+import NotFoundView from '../views/pages/404View.vue'
 import AuthView from '../views/AuthView.vue'
+import DashboardView from '../views/DashboardView.vue'
 
 const Signin = () => import(/* webpackChunkName: "SigninChunk" */ '@/components/modules/SignIn.vue')
 const Signup = () => import(/* webpackChunkName: "SignupChunk" */ '@/components/modules/SignUp.vue')
 
 const routes = [
-  // {
-  //   path: '/',
-  //   name: 'home',
-  //   component: HomeView,
-  //   meta: {
-  //     requiresAuth: true
-  //   }
-  // },
+  {
+    path: '/',
+    name: 'Dashboard',
+    component: DashboardView,
+    meta: {
+      requiresAuth: true
+    }
+  },
   {
     path: '/auth',
     redirect: { name: 'Sign-In' }
@@ -36,7 +38,8 @@ const routes = [
   },
   {
     path: '/:catchAll(.*)*',
-    redirect: { name: 'Sign-In' }
+    name: '404',
+    component: NotFoundView
   }
 ]
 const router = createRouter({
@@ -46,14 +49,13 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  /* const isAuthenticated = storageService.getLocalStorage('auth')
+  const isAuthenticated = storageService.getLocalStorage('auth')
   if (to.meta.requiresAuth && !isAuthenticated) {
-    next({ name: 'signin' })
+    next({ name: 'Sign-In' })
   } else if (!to.meta.requiresAuth && isAuthenticated) {
-    next({ name: 'home' })
+    next({ name: 'Dashboard' })
   } else {
     next()
-  } */
-  next()
+  }
 })
 export default router

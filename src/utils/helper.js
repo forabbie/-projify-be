@@ -1,4 +1,4 @@
-import StorageService from '@/services/storage.service'
+import StorageService from '@/utils/storage'
 
 export function formatDate(dateStr) {
   const dateObj = new Date(dateStr)

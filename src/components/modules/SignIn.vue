@@ -6,61 +6,53 @@
         Collaborate with your team instantly.
       </p>
     </div>
-    <form class="mt-8 space-y-6" action="#">
-      <div>
-        <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-          >Email</label
-        >
-        <input
-          type="email"
-          name="email"
-          id="email"
-          class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          placeholder="name@company.com"
-          required
-        />
+    <vee-form class="mt-8 space-y-6" :validation-schema="schema" @submit="login">
+      <div
+        class="text-white text-center font-bold p-4 mb-4"
+        v-if="login_show_alert"
+        :class="login_alert_variant"
+      >
+        {{ login_alert_msg }}
       </div>
-      <div>
-        <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-          >Password</label
-        >
-        <input
-          type="password"
-          name="password"
-          id="password"
-          placeholder="••••••••"
-          class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          required
-        />
-      </div>
-      <!-- <div class="flex items-start">
-        <div class="flex items-center h-5">
-          <input
-            id="remember"
-            aria-describedby="remember"
-            name="remember"
-            type="checkbox"
-            class="w-4 h-4 border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600"
-            required
+      <FieldInputGroup>
+        <template #label>
+          <FieldInputLabel :label="'Email'" :label_for="'email'" />
+        </template>
+        <template #field>
+          <vee-field
+            type="email"
+            name="email"
+            id="email"
+            placeholder="name@company.com"
+            :class="fieldClass"
           />
-        </div>
-        <div class="ml-3 text-sm">
-          <label for="remember" class="font-medium text-gray-900 dark:text-white"
-            >Remember me</label
-          >
-        </div>
-        <a href="#" class="ml-auto text-sm text-blue-700 hover:underline dark:text-blue-500"
-          >Lost Password?</a
-        >
-      </div> -->
+        </template>
+        <template #error>
+          <ErrorMessage class="text-red-600" name="email" />
+        </template>
+      </FieldInputGroup>
+      <FieldInputGroup>
+        <template #label>
+          <FieldInputLabel :label="'Password'" :label_for="'Password'" />
+        </template>
+        <template #field>
+          <vee-field name="password" :bails="false" v-slot="{ field, errors }">
+            <input type="password" placeholder="••••••••" :class="fieldClass" v-bind="field" />
+            <div class="text-red-600" v-for="error in errors" :key="error">
+              {{ error }}
+            </div>
+          </vee-field>
+        </template>
+      </FieldInputGroup>
       <button
         type="submit"
         class="bg-blue-600 text-white active:bg-blue-700 text-sm font-bold px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full"
         style="transition: all 0.15s ease 0s"
+        :disabled="login_in_submission"
       >
         Sign in to your account
       </button>
-    </form>
+    </vee-form>
     <div
       class="my-4 flex items-center before:mt-0.5 before:flex-1 before:border-t before:border-neutral-300 after:mt-0.5 after:flex-1 after:border-t after:border-neutral-300"
     >
@@ -90,4 +82,50 @@
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import storageService from '@/utils/storage'
+import useAuthStore from '@/stores/auth'
+
+import FieldInputGroup from '@/components/elements/FieldInputGroup.vue'
+import FieldInputLabel from '@/components/elements/FieldInputLabel.vue'
+
+const authStore = useAuthStore()
+const router = useRouter()
+
+const fieldClass = ref(
+  'bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+)
+const schema = {
+  email: 'required|email',
+  password: 'required'
+}
+const login_in_submission = ref(false)
+const login_show_alert = ref(false)
+const login_alert_variant = ref('bg-blue-500')
+const login_alert_msg = ref('Please wait! We are logging you in.')
+
+const login = async (values) => {
+  login_show_alert.value = true
+  login_in_submission.value = true
+  login_alert_variant.value = 'bg-blue-500'
+  login_alert_msg.value = 'Please wait! We are logging you in.'
+
+  try {
+    const result = await authStore.signin(values)
+    if (result) {
+      login_alert_variant.value = 'bg-green-500'
+      login_alert_msg.value = 'Success! You are now logged in.'
+      storageService.setLocalStorage('auth', true)
+      router.push({ name: 'Dashboard' })
+      return
+    }
+  } catch (error) {
+    login_in_submission.value = false
+    login_alert_variant.value = 'bg-red-500'
+    login_alert_msg.value = 'Invalid Email or password.'
+    return
+  }
+}
+</script>
