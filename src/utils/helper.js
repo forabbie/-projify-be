@@ -26,3 +26,8 @@ export function getUserID() {
 export function isAuthenticated() {
   return StorageService.getLocalStorage('auth') && StorageService.getCookie('rfc7519')
 }
+
+export function getToken() {
+  const token = StorageService.getCookie('rfc7519') || null
+  return token
+}

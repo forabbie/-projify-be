@@ -161,23 +161,16 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { isAuthenticated } from '@/utils/helper'
 import useAuthStore from '@/stores/auth'
-import useLayoutStore from '@/stores/layout'
-// import storageService from '@/utils/storage'
 import LogoIcon from '../icons/IconLogo.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
-const layoutStore = useLayoutStore()
-const authenticated = ref(isAuthenticated() || layoutStore.userLoggedIn)
 
 const logout = async () => {
   try {
     await authStore.signout()
-    authenticated.value = false
     router.push({ name: 'Sign-In' })
   } catch (error) {
     return
