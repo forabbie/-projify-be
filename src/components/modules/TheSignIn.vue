@@ -87,7 +87,6 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import storageService from '@/utils/storage'
 import useAuthStore from '@/stores/auth'
-import useLayoutStore from '@/stores/layout'
 
 import FieldInputGroup from '@/components/elements/FieldInputGroup.vue'
 import FieldInputLabel from '@/components/elements/FieldInputLabel.vue'
@@ -107,10 +106,6 @@ const login_show_alert = ref(false)
 const login_alert_variant = ref('bg-blue-500')
 const login_alert_msg = ref('Please wait! We are logging you in.')
 
-const toggleUserLogIn = () => {
-  layoutStore.userLoggedIn = !layoutStore.userLoggedIn
-}
-
 const login = async (values) => {
   login_show_alert.value = true
   login_in_submission.value = true
@@ -123,7 +118,6 @@ const login = async (values) => {
       login_alert_variant.value = 'bg-green-500'
       login_alert_msg.value = 'Success! You are now logged in.'
       storageService.setLocalStorage('auth', true)
-      toggleUserLogIn()
       router.push({ name: 'Dashboard' })
       return
     }
