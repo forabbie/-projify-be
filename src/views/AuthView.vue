@@ -1,6 +1,22 @@
 <template>
   <div>
-    <navbar-component></navbar-component>
+    <nav
+      class="fixed top-0 z-40 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700"
+    >
+      <div class="px-3 py-3 lg:px-5 lg:pl-3">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center justify-start">
+            <a href="#" class="flex ml-2 md:mr-24 z-50">
+              <div class="mr-3 w-8"><LogoIcon /></div>
+              <span
+                class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white"
+                >Projify</span
+              >
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
     <main>
       <section class="absolute w-full h-full">
         <section class="h-screen bg-gray-100">
@@ -18,7 +34,7 @@
       </section>
     </main>
 
-    <footer class="w-full absolute bottom-0 bg-white dark:bg-gray-800">
+    <footer class="w-full absolute bottom-0 border-t bg-gray-100">
       <div class="w-full mx-auto p-4 md:flex md:items-center md:justify-between">
         <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400"
           >© 2023 <a href="https://flowbite.com/" class="hover:underline">Projify</a>. All Rights
@@ -41,6 +57,5 @@
 </template>
 
 <script setup>
-import NavbarComponent from '../components/layout/AppNavbar.vue'
-// import FooterComponent from '../components/layout/AppFooter.vue'
+import LogoIcon from '@/components/icons/IconLogo.vue'
 </script>

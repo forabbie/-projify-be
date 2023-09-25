@@ -1,5 +1,6 @@
 import api from './api.service'
 import storageService from '@/utils/storage'
+import { getToken } from '@/utils/helper'
 
 class AuthService {
   signup(user) {
@@ -37,14 +38,20 @@ class AuthService {
       })
   }
   signout() {
-    return api.post('auth/signout').then((response) => {
-      if (response.data) {
-        storageService.deleteCookie('rfc7519')
-        storageService.deleteCookie('user')
-        storageService.deleteLocalStorage('auth')
-      }
-      return response.data
-    })
+    return api
+      .delete('auth/signout', {
+        headers: {
+          Authorization: getToken()
+        }
+      })
+      .then((response) => {
+        if (response.data) {
+          storageService.deleteCookie('rfc7519')
+          storageService.deleteCookie('user')
+          storageService.deleteLocalStorage('auth')
+        }
+        return response.data
+      })
   }
   currentUser(token) {
     return api
