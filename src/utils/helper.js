@@ -29,5 +29,5 @@ export function isAuthenticated() {
 
 export function getToken() {
   const token = StorageService.getCookie('rfc7519') || null
-  return token
+  return token ? token.replace('Bearer ', '') : null
 }
