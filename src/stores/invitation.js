@@ -9,10 +9,6 @@ export default defineStore('invitation', {
   },
   mutations: {},
   actions: {
-    // async signup(token) {
-    //   const result = await InvitationService.signup(token)
-    //   return result
-    // },
     async accept(token) {
       const result = await InvitationService.accept(token)
       return result

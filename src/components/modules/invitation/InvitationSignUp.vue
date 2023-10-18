@@ -85,12 +85,11 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import storageService from '@/utils/storage'
+import { setLocalStorage } from '@/utils/storage'
 import useAuthStore from '@/stores/auth'
 import useInvitationStore from '@/stores/invitation'
 
 import FieldInputGroup from '@/components/elements/FieldInputGroup.vue'
-// import FieldInput from '@/components/elements/FieldInput.vue'
 import FieldInputLabel from '@/components/elements/FieldInputLabel.vue'
 
 const route = useRoute()
@@ -122,28 +121,29 @@ const validateInvitation = async () => {
   const token = ref(route.query.token)
   try {
     const result = await invitaionStore.validate(token.value)
-    if (result) {
+    if (result.message == 'Valid Invitation.') {
       user.value.email = result.data.recipient_email
       console.log(result)
       return
     }
+    router.push({ name: 'Invite-Sign-In' })
   } catch (error) {
     console.log(error)
     if (error.response.status === 422) {
-      router.push({ name: '404' })
+      // router.push({ name: '404' })
       return
     }
   }
 }
 validateInvitation()
 
-const acceptInvitation = async () => {
+const acceptInvitation = async (workspaceid) => {
   const token = ref(route.query.token)
   try {
     const result = await invitaionStore.accept(token.value)
     if (result) {
-      storageService.setLocalStorage('auth', true)
-      router.push({ name: 'Dashboard' })
+      setLocalStorage('auth', true)
+      router.push({ name: 'Workspace', params: { workspaceid: workspaceid } })
       return
     }
   } catch (error) {
@@ -159,10 +159,11 @@ const register = async (values) => {
 
   try {
     const result = await authStore.signup(values)
-    if (result) {
+    if (result.data) {
       reg_alert_variant.value = 'bg-green-500'
-      reg_alert_msg.value = 'Success! Your account has been created.'
-      acceptInvitation()
+      reg_alert_msg.value = 'Success! You are now logged in.'
+      acceptInvitation(result.data.workspace.id)
+      return
     }
   } catch (error) {
     console.log('error:', error.response)

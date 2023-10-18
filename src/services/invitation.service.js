@@ -1,5 +1,4 @@
 import api from './api.service'
-// import storageService from '@/utils/storage'
 import { getToken } from '@/utils/helper'
 
 class InvitationService {
@@ -23,11 +22,6 @@ class InvitationService {
         }
       })
       .then((response) => {
-        // if (response.data) {
-        //   storageService.deleteCookie('rfc7519')
-        //   storageService.deleteCookie('user')
-        //   storageService.deleteLocalStorage('auth')
-        // }
         return response.data
       })
   }

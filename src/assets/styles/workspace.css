@@ -1,0 +1,10 @@
+.workspace-header {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  top: -2rem;
+  width: 100%;
+  /* padding-left: 100px;
+  padding-right: 32px; */
+  margin-bottom: 24px;
+}

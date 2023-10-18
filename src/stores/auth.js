@@ -13,8 +13,8 @@ export default defineStore('auth', {
       const result = await AuthService.signin(values)
       return result
     },
-    async get_current_user() {
-      const user = await AuthService.currentUser()
+    async getCurrentUser(token) {
+      const user = await AuthService.currentUser(token)
       return user
     },
     async signout() {

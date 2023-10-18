@@ -3,7 +3,7 @@
     class="flex flex-col justify-center items-center px-6 mx-auto h-screen xl:px-0 dark:bg-gray-900"
   >
     <div class="block md:max-w-lg">
-      <img src="@/assets/images/404.svg" alt="astronaut image" />
+      <img src="@/assets/images/illustrations/404.svg" alt="astronaut image" />
     </div>
     <div class="text-center xl:max-w-4xl">
       <h1

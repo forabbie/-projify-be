@@ -1,5 +1,5 @@
 import api from './api.service'
-import storageService from '@/utils/storage'
+import { setCookie, deleteCookie, deleteLocalStorage } from '@/utils/storage'
 import { getToken } from '@/utils/helper'
 
 class AuthService {
@@ -14,7 +14,7 @@ class AuthService {
       .then((response) => {
         if (response.status == 200) {
           const token = response.headers.get('Authorization')
-          storageService.setCookie('rfc7519', token)
+          setCookie('rfc7519', token)
           this.currentUser(token)
         }
         return response.data
@@ -31,7 +31,7 @@ class AuthService {
       .then((response) => {
         if (response.status == 200) {
           const token = response.headers.get('Authorization')
-          storageService.setCookie('rfc7519', token)
+          setCookie('rfc7519', token)
           this.currentUser(token)
         }
         return response.data
@@ -46,9 +46,9 @@ class AuthService {
       })
       .then((response) => {
         if (response.data) {
-          storageService.deleteCookie('rfc7519')
-          storageService.deleteCookie('user')
-          storageService.deleteLocalStorage('auth')
+          deleteCookie('rfc7519')
+          deleteCookie('user')
+          deleteLocalStorage('auth')
         }
         return response.data
       })
@@ -61,16 +61,16 @@ class AuthService {
         }
       })
       .then((response) => {
-        if (response.data) {
+        if (response.data.data) {
           const user = {
-            id: response.data.id,
-            first_name: response.data.first_name,
-            last_name: response.data.first_name,
-            email: response.data.email
+            id: response.data.data.id,
+            first_name: response.data.data.first_name,
+            last_name: response.data.data.first_name,
+            email: response.data.data.email
           }
-          storageService.setCookie('user', user, 14)
+          setCookie('user', user, 14)
         }
-        return response.data
+        return response.data.data
       })
   }
 }
