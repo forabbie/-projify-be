@@ -107,13 +107,13 @@
 </template>
 
 <script setup>
-import useAuthStore from '@/stores/auth'
-import storageService from '@/utils/storage'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { setLocalStorage } from '@/utils/storage'
+
+import useAuthStore from '@/stores/auth'
 
 import FieldInputGroup from '@/components/elements/FieldInputGroup.vue'
-// import FieldInput from '@/components/elements/FieldInput.vue'
 import FieldInputLabel from '@/components/elements/FieldInputLabel.vue'
 
 const authStore = useAuthStore()
@@ -140,13 +140,16 @@ const register = async (values) => {
   reg_alert_msg.value = 'Please wait! Your account is being created.'
 
   try {
-    await authStore.signup(values)
-    reg_alert_variant.value = 'bg-green-500'
-    reg_alert_msg.value = 'Success! Your account has been created.'
-    storageService.setLocalStorage('auth', true)
-    router.push({ name: 'Dashboard' })
+    const result = await authStore.signup(values)
+    if (result.data) {
+      reg_alert_variant.value = 'bg-green-500'
+      reg_alert_msg.value = 'Success! Your account has been created.'
+      setLocalStorage('auth', true)
+      router.push({ name: 'Workspace', params: { workspaceid: result.data.workspace.id } })
+      return
+    }
   } catch (error) {
-    console.log('error:', error.response)
+    console.log('error:', error)
     if (error.response.status === 422) {
       reg_in_submission.value = false
       reg_alert_variant.value = 'bg-red-500'

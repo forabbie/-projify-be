@@ -1,6 +1,7 @@
-import StorageService from '@/utils/storage'
+import { getCookie, getLocalStorage } from '@/utils/storage'
 
-export function formatDate(dateStr) {
+// date formatter
+export const formatDate = (dateStr = '') => {
   const dateObj = new Date(dateStr)
   return dateObj.toLocaleDateString('en-US', {
     year: 'numeric',
@@ -9,25 +10,27 @@ export function formatDate(dateStr) {
   })
 }
 
-export function utf8_to_b64(str) {
+// encryption
+export const utf8_to_b64 = (str = '') => {
   return btoa(unescape(encodeURIComponent(str)))
 }
 
-export function b64_to_utf8(str) {
+// decryption
+export const b64_to_utf8 = (str = '') => {
   return decodeURIComponent(escape(atob(str)))
 }
 
-export function getUserID() {
-  const token = StorageService.getCookie('rfc7519').access_token || null
-  const userID = token ? JSON.parse(token) : { sub: null }
-  return userID
+// storage checker
+export const isAuthenticated = () => {
+  return getLocalStorage('auth') && getCookie('rfc7519')
 }
 
-export function isAuthenticated() {
-  return StorageService.getLocalStorage('auth') && StorageService.getCookie('rfc7519')
+export const getToken = () => {
+  const token = getCookie('rfc7519') || null
+  return token // ? token.replace('Bearer ', '') : null
 }
 
-export function getToken() {
-  const token = StorageService.getCookie('rfc7519') || null
-  return token ? token.replace('Bearer ', '') : null
+export const getActiveIndex = () => {
+  const index = getLocalStorage('activeIndex') || null
+  return index // ? token.replace('Bearer ', '') : null
 }

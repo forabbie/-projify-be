@@ -13,4 +13,6 @@
   </section>
 </template>
 
-<script setup></script>
+<script setup>
+import LogoIcon from '@/components/icons/IconLogo.vue'
+</script>

@@ -37,23 +37,21 @@
         </div>
         <div class="flex items-center">
           <div class="flex items-center ml-3">
-            <div>
-              <button
-                type="button"
-                class="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
-                aria-expanded="false"
-                data-dropdown-toggle="dropdown-user"
-              >
-                <span class="sr-only">Open user menu</span>
-                <img
-                  class="w-8 h-8 rounded-full"
-                  src="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
-                  alt="user photo"
-                />
-              </button>
-            </div>
+            <button
+              type="button"
+              class="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
+              aria-expanded="false"
+              data-dropdown-toggle="dropdown-user"
+            >
+              <span class="sr-only">Open user menu</span>
+              <img
+                class="w-8 h-8 rounded-full"
+                src="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
+                alt="user photo"
+              />
+            </button>
             <div
-              class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600"
+              class="z-50 hidden my-4 mr-2 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600"
               id="dropdown-user"
             >
               <div class="px-4 py-3" role="none">
@@ -61,7 +59,7 @@
                   class="text-sm font-medium text-gray-900 truncate dark:text-gray-300"
                   role="none"
                 >
-                  neil.sims@flowbite.com
+                  {{ current_user.email }}
                 </p>
               </div>
               <ul class="py-1" role="none">
@@ -161,12 +159,16 @@
 </template>
 
 <script setup>
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { getToken } from '@/utils/helper'
+import { getCookie } from '@/utils/storage'
 import useAuthStore from '@/stores/auth'
 import LogoIcon from '../icons/IconLogo.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
+const current_user = ref(getCookie('user'))
 
 const logout = async () => {
   try {
@@ -176,4 +178,16 @@ const logout = async () => {
     return
   }
 }
+
+const getCurrentUser = async () => {
+  try {
+    const result = await authStore.getCurrentUser(getToken())
+    if (result) {
+      current_user.value = result
+    }
+  } catch (error) {
+    return
+  }
+}
+getCurrentUser()
 </script>
