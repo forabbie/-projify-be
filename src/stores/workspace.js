@@ -4,13 +4,20 @@ import { defineStore } from 'pinia'
 export default defineStore('workspace', {
   state: () => {
     return {
+      workspaces: [{}],
+      workspace: {
+        id: '',
+        name: '',
+        description: '',
+        is_creator: false
+      },
       schema: {
         'workspace-name': 'required'
       },
       submission: false,
       show_alert: false,
       alert_variant: 'bg-blue-500',
-      alert_msg: 'Please wait! We are logging you in.'
+      alert_msg: 'Please wait! We are saving your data.'
     }
   },
   mutations: {},

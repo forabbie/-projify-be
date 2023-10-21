@@ -9,11 +9,11 @@
           <IconPenPaper class-name="w-4 h-4 mr-2" />
         </template>
       </DropdownActionItem>
-      <DropdownActionItem id="delete-workspace-modal" text="Delete workspace">
+      <!-- <DropdownActionItem id="delete-workspace-modal" text="Delete workspace">
         <template #icon>
           <IconTrash class-name="w-4 h-4 mr-2" />
         </template>
-      </DropdownActionItem>
+      </DropdownActionItem> -->
     </ul>
   </div>
 </template>
@@ -21,7 +21,7 @@
 <script setup>
 import { ref } from 'vue'
 import IconPenPaper from '@/components/icons/IconPenPaper.vue'
-import IconTrash from '@/components/icons/IconTrash.vue'
+// import IconTrash from '@/components/icons/IconTrash.vue'
 import DropdownActionItem from '@/components/modules/workspace/dropdowns/DropdownActionItem.vue'
 
 const props = defineProps({

@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { isAuthenticated, getActiveIndex } from '@/utils/helper'
 import { setLocalStorage } from '@/utils/storage'
-import { getUserWorkspace } from '@/utils/workspace.utils'
+import { getUserWorkspaces } from '@/utils/workspace.utils'
 import NotFoundView from '@/views/404View.vue'
 import AuthView from '@/views/AuthView.vue'
 import InvitationView from '@/views/InvitationView.vue'
@@ -51,7 +51,7 @@ const routes = [
     beforeEnter: async (to, from, next) => {
       const id = to.params?.workspaceid || null
       try {
-        const result = await getUserWorkspace()
+        const result = await getUserWorkspaces()
         const idExists = result.some((workspace) => parseInt(workspace.id) === parseInt(id))
         if (idExists) {
           setLocalStorage('activeIndex', { workspace: id })
