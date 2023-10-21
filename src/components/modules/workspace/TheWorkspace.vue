@@ -87,23 +87,24 @@ import WorkspaceHeader from '@/components/modules/workspace/WorkspaceHeader.vue'
 import ModalEdit from '@/components/modules/workspace/modals/ModalEdit.vue'
 import ModalDanger from '@/components/elements/modals/ModalDanger.vue'
 import useWorkspaceStore from '@/stores/workspace'
-import { onMounted, ref } from 'vue'
+import { getUserWorkspaces } from '@/utils/workspace.utils'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
 const workspaceStore = useWorkspaceStore()
-const workspace = ref({ name: '', description: '' })
+const workspace = ref(computed(() => workspaceStore.workspace))
+const workspaceid = ref(computed(() => route.params.workspaceid))
 
 onMounted(() => {
   getWorkspace()
 })
 
 const getWorkspace = async () => {
-  const workspaceid = ref(route.params.workspaceid)
   try {
     const result = await workspaceStore.getWorkspace(workspaceid.value)
     if (result) {
-      workspace.value = result.workspace
+      workspaceStore.workspace = result.workspace
       return
     }
   } catch (error) {
@@ -112,22 +113,32 @@ const getWorkspace = async () => {
 }
 
 const save = async (value) => {
-  const workspaceid = ref(route.params.workspaceid)
   const data = {}
   data.name = value['workspace-name']
   data.description = value['workspace-description']
   data.id = workspaceid.value
-
-  console.log('edited:', data)
+  workspaceStore.show_alert = true
+  workspaceStore.submission = true
+  workspaceStore.alert_variant = 'bg-blue-500'
+  workspaceStore.alert_msg = 'Please be patient while we save your data.'
   try {
     const result = await workspaceStore.editWorkspace(data)
     if (result) {
-      console.log('edited:', result)
-      // workspace.value = result.workspace
+      workspaceStore.alert_variant = 'bg-green-500'
+      workspaceStore.alert_msg = 'Workspace has been successfully updated.'
+      getWorkspace()
+      getUserWorkspaces()
       return
     }
   } catch (error) {
     console.log(error)
+    workspaceStore.submission = false
+    workspaceStore.alert_variant = 'bg-red-500'
+    workspaceStore.alert_msg = 'Unable to save workspace data.'
   }
 }
+
+watch(workspaceid, () => {
+  getWorkspace()
+})
 </script>

@@ -30,6 +30,7 @@
         </div>
         <!-- Dropdown -->
         <ButtonDots
+          v-show="workspace.is_creator"
           id="dropdownRightEndButton"
           toggle-text="dropdownRightEnd"
           placement="right-end"

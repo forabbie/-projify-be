@@ -130,26 +130,10 @@ const schema = ref(
     return workspaceStore.schema
   })
 )
-const submission = ref(
-  computed(() => {
-    return workspaceStore.submission
-  })
-)
-const show_alert = ref(
-  computed(() => {
-    return workspaceStore.show_alert
-  })
-)
-const alert_variant = ref(
-  computed(() => {
-    return workspaceStore.alert_variant
-  })
-)
-const alert_msg = ref(
-  computed(() => {
-    return workspaceStore.alert_msg
-  })
-)
+const submission = ref(computed(() => workspaceStore.submission))
+const show_alert = ref(computed(() => workspaceStore.show_alert))
+const alert_variant = ref(computed(() => workspaceStore.alert_variant))
+const alert_msg = ref(computed(() => workspaceStore.alert_msg))
 
 const onsave = (value) => {
   emit('onAction', value)
