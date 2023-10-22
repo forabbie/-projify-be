@@ -2,7 +2,13 @@
   <navbar-component></navbar-component>
   <sidebar-component></sidebar-component>
   <router-view></router-view>
-  <ModalProject id="projectModal" :data="project" @onAction="save" />
+  <ModalProject
+    id="projectModal"
+    :data="{ title: '', details: '', expected_completion_date: '' }"
+    @onAction="save"
+    this-action="New"
+  />
+  <ModalProject id="projectEditModal" :data="project" @onAction="save" this-action="Edit" />
 </template>
 
 <script setup>
@@ -71,18 +77,22 @@ const getUserProject = async () => {
   }
 }
 
-const save = async (value) => {
+const save = async (value, action) => {
   const data = {}
   data.title = value['project-title']
   data.details = value['project-details']
   data.expected_completion_date = value['project-competion']
   data.workspaceid = workspaceid.value
+  data.projectid = projectid.value
   projectStore.show_alert = true
   projectStore.submission = true
   projectStore.alert_variant = 'bg-blue-500'
   projectStore.alert_msg = 'Please be patient while we save your data.'
   try {
-    const result = await projectStore.addUserProject(data)
+    const result =
+      action == 'New'
+        ? await projectStore.addUserProject(data)
+        : await projectStore.editUserProject(data)
     if (result) {
       projectStore.alert_variant = 'bg-green-500'
       projectStore.alert_msg = 'Project has been successfully create.'

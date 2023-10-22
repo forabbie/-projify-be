@@ -28,6 +28,10 @@ export default defineStore('project', {
     async addUserProject(value) {
       const result = await ProjectService.addUserProject(value)
       return result
+    },
+    async editUserProject(value) {
+      const result = await ProjectService.editUserProject(value)
+      return result
     }
   }
 })

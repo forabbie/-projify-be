@@ -40,6 +40,22 @@ class ProjectService {
         return response.data
       })
   }
+  editUserProject(value) {
+    return api
+      .patch(`workspaces/${value.workspaceid}/projects/${value.projectid}`, {
+        project: {
+          title: value.title,
+          details: value.details,
+          expected_completion_date: value.expected_completion_date
+        },
+        headers: {
+          Authorization: getToken()
+        }
+      })
+      .then((response) => {
+        return response.data
+      })
+  }
   addUserToProject(value) {
     return api
       .get(`workspaces/${value.workspaceid}/projects/${value.project}/add-member`, {

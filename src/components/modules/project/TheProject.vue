@@ -89,15 +89,6 @@
                 data-dropdown-placement="right-end"
                 type="button"
               />
-              <!-- <button
-                id="dropdownProjectButton"
-                data-dropdown-toggle="dropdownProject"
-                data-dropdown-placement="right-end"
-                class="inline-flex items-center p-2 text-sm font-medium text-center text-gray-900 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none dark:text-white focus:ring-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
-                type="button"
-              >
-                <IconDotHorizontal :className="'w-6 h-6 text-gray-800 dark:text-white'" />
-              </button> -->
               <DropdownAction id="dropdownProject" label="dropdownProjectButton" />
             </div>
           </div>

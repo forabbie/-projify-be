@@ -32,7 +32,9 @@
           <span class="sr-only">Close modal</span>
         </button>
         <div class="px-6 py-6 lg:px-8">
-          <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">Project Update</h3>
+          <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">
+            {{ thisAction }} Project
+          </h3>
           <vee-form class="mt-8 space-y-6" :validation-schema="schema" @submit="onsave">
             <div
               class="text-white text-center font-bold p-4 mb-4"
@@ -130,11 +132,12 @@ import useProjectStore from '@/stores/project'
 const emit = defineEmits(['onAction'])
 
 const projectStore = useProjectStore()
-// const project = ref(computed(() => projectStore.project))
+
 const props = defineProps({
   id: String,
   data: Object,
   label: String,
+  thisAction: String,
   onAction: Function
 })
 const id = ref(props.id)
@@ -157,6 +160,8 @@ const alert_variant = ref(computed(() => projectStore.alert_variant))
 const alert_msg = ref(computed(() => projectStore.alert_msg))
 
 const onsave = (value) => {
-  emit('onAction', value)
+  // const isEdit = props.thisAction
+  // console.log(isEdit)
+  emit('onAction', value, props.thisAction)
 }
 </script>

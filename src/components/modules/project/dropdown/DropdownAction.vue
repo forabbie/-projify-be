@@ -4,7 +4,7 @@
     class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700"
   >
     <ul class="text-sm text-gray-700 dark:text-gray-200" :aria-labelledby="label">
-      <DropdownActionItem id="projectModal" text="Edit Project" class-name="rounded-t-lg">
+      <DropdownActionItem id="projectEditModal" text="Edit Project" class-name="rounded-t-lg">
         <template #icon>
           <IconPenPaper class-name="w-4 h-4 mr-2" />
         </template>
