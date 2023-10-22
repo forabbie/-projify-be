@@ -132,7 +132,6 @@ import useProjectStore from '@/stores/project'
 const emit = defineEmits(['onAction'])
 
 const projectStore = useProjectStore()
-
 const props = defineProps({
   id: String,
   data: Object,
