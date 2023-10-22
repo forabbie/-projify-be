@@ -210,7 +210,6 @@ const projectStore = useProjectStore()
 const workspaces = ref(computed(() => workspaceStore.workspaces))
 const workspace = ref(computed(() => workspaceStore.workspace))
 const projects = ref(computed(() => projectStore.projects))
-
 onMounted(() => {
   initFlowbite()
 })

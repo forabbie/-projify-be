@@ -7,7 +7,6 @@
     data-modal-backdrop="static"
   >
     <div class="relative w-full max-w-md max-h-full">
-      <!-- Modal content -->
       <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
         <button
           type="button"
@@ -32,9 +31,7 @@
           <span class="sr-only">Close modal</span>
         </button>
         <div class="px-6 py-6 lg:px-8">
-          <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">
-            {{ thisAction }} Project
-          </h3>
+          <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">Invite user</h3>
           <vee-form class="mt-8 space-y-6" :validation-schema="schema" @submit="onsave">
             <div
               class="text-white text-center font-bold p-4 mb-4"
@@ -45,75 +42,29 @@
             </div>
             <FieldInputGroup>
               <template #label>
-                <FieldInputLabel label="Title" label_for="input-project-title" />
+                <FieldInputLabel label="Recipient" label_for="input-recipient" />
               </template>
               <template #field>
                 <FieldInput
-                  :data="data.title"
+                  :data="data.recipient_email"
                   type="text"
-                  name="project-title"
-                  id="input-project-title"
+                  name="recipient"
+                  id="input-recipient"
                   placeholder=""
                   :class="inputTextClass"
                 />
               </template>
               <template #error>
-                <ErrorMessage class="text-red-600" name="project-title" />
+                <ErrorMessage class="text-red-600" name="recipient" />
               </template>
             </FieldInputGroup>
-
-            <FieldInputGroup>
-              <template #label>
-                <FieldInputLabel label="Details (optional)" label_for="input-project-details" />
-              </template>
-              <template #field>
-                <FieldInput
-                  :data="data.details"
-                  as="textarea"
-                  name="project-details"
-                  id="input-project-details"
-                  placeholder=""
-                  :class="inputTextAreaClass"
-                  cols="30"
-                  rows="10"
-                />
-              </template>
-              <template #error>
-                <ErrorMessage class="text-red-600" name="project-details" />
-              </template>
-            </FieldInputGroup>
-
-            <FieldInputGroup>
-              <template #label>
-                <FieldInputLabel
-                  label="Expected competion (optional)"
-                  label_for="input-project-competion"
-                />
-              </template>
-              <template #field>
-                <FieldInput
-                  :data="data.expected_completion_date"
-                  type="date"
-                  name="project-competion"
-                  id="input-project-competion"
-                  placeholder=""
-                  :class="inputTextAreaClass"
-                  cols="30"
-                  rows="10"
-                />
-              </template>
-              <template #error>
-                <ErrorMessage class="text-red-600" name="project-competion" />
-              </template>
-            </FieldInputGroup>
-
             <button
               type="submit"
               class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
               style="transition: all 0.15s ease 0s"
               :disabled="submission"
             >
-              Save
+              Invite
             </button>
           </vee-form>
         </div>
@@ -127,40 +78,35 @@ import { computed, ref } from 'vue'
 import FieldInput from '@/components/elements/FieldInput.vue'
 import FieldInputGroup from '@/components/elements/FieldInputGroup.vue'
 import FieldInputLabel from '@/components/elements/FieldInputLabel.vue'
-import useProjectStore from '@/stores/project'
+import useMemberStore from '@/stores/member'
 
 const emit = defineEmits(['onAction'])
 
-const projectStore = useProjectStore()
+const memberStore = useMemberStore()
 const props = defineProps({
   id: String,
   data: Object,
   label: String,
-  thisAction: String,
   onAction: Function
 })
 const id = ref(props.id)
+// const member = ref(props.data)
 
 const inputTextClass = ref(
   'bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
 )
-const inputTextAreaClass = ref(
-  'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white'
-)
 
 const schema = ref(
   computed(() => {
-    return projectStore.schema
+    return memberStore.schema
   })
 )
-const submission = ref(computed(() => projectStore.submission))
-const show_alert = ref(computed(() => projectStore.show_alert))
-const alert_variant = ref(computed(() => projectStore.alert_variant))
-const alert_msg = ref(computed(() => projectStore.alert_msg))
+const submission = ref(computed(() => memberStore.submission))
+const show_alert = ref(computed(() => memberStore.show_alert))
+const alert_variant = ref(computed(() => memberStore.alert_variant))
+const alert_msg = ref(computed(() => memberStore.alert_msg))
 
 const onsave = (value) => {
-  // const isEdit = props.thisAction
-  // console.log(isEdit)
-  emit('onAction', value, props.thisAction)
+  emit('onAction', value)
 }
 </script>
