@@ -13,7 +13,7 @@ class WorkspaceService {
         return response.data
       })
   }
-  getWorkspace(id) {
+  getUserWorkspace(id) {
     return api
       .get(`workspaces/${id}`, {
         headers: {

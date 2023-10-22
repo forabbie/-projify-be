@@ -24,13 +24,9 @@ const props = defineProps({
 
 const placeholder = props.type === 'password' ? '••••••••' : props.name
 
-const data = ref(
-  computed(() => {
-    return JSON.parse(JSON.stringify(props.data))
-  })
-)
+const data = ref(computed(() => JSON.parse(JSON.stringify(props.data))))
 
-const value = ref({})
+const value = ref(data)
 
 watch(data, (newValue, oldValue) => {
   if (newValue !== oldValue) {

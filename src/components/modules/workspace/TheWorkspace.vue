@@ -73,44 +73,33 @@
     </div>
 
     <!-- Modals -->
-    <ModalEdit id="edit-workspace-modal" :data="workspace" @onAction="save" />
-    <ModalDanger
+    <ModalWorkspace id="edit-workspace-modal" :data="workspace" @onAction="save" />
+    <!-- <ModalDanger
       id="delete-workspace-modal"
       msg="Are you sure you want to delete this workspace?"
       @onAction="save"
-    />
+    /> -->
   </div>
 </template>
 
 <script setup>
-import WorkspaceHeader from '@/components/modules/workspace/WorkspaceHeader.vue'
-import ModalEdit from '@/components/modules/workspace/modals/ModalEdit.vue'
-import ModalDanger from '@/components/elements/modals/ModalDanger.vue'
-import useWorkspaceStore from '@/stores/workspace'
-import { getUserWorkspaces } from '@/utils/workspace.utils'
-import { computed, onMounted, ref, watch } from 'vue'
+import { initFlowbite } from 'flowbite'
 import { useRoute } from 'vue-router'
+import { computed, onMounted, ref } from 'vue'
+import WorkspaceHeader from '@/components/modules/workspace/WorkspaceHeader.vue'
+import ModalWorkspace from '@/components/modules/workspace/modal/ModalWorkspace.vue'
+// import ModalDanger from '@/components/elements/modals/ModalDanger.vue'
+import useWorkspaceStore from '@/stores/workspace'
+import { getUserWorkspaces, getUserWorkspace } from '@/utils/workspace.utils'
+
+onMounted(() => {
+  initFlowbite()
+})
 
 const route = useRoute()
 const workspaceStore = useWorkspaceStore()
 const workspace = ref(computed(() => workspaceStore.workspace))
 const workspaceid = ref(computed(() => route.params.workspaceid))
-
-onMounted(() => {
-  getWorkspace()
-})
-
-const getWorkspace = async () => {
-  try {
-    const result = await workspaceStore.getWorkspace(workspaceid.value)
-    if (result) {
-      workspaceStore.workspace = result.workspace
-      return
-    }
-  } catch (error) {
-    console.log(error)
-  }
-}
 
 const save = async (value) => {
   const data = {}
@@ -126,7 +115,7 @@ const save = async (value) => {
     if (result) {
       workspaceStore.alert_variant = 'bg-green-500'
       workspaceStore.alert_msg = 'Workspace has been successfully updated.'
-      getWorkspace()
+      getUserWorkspace(workspaceid)
       getUserWorkspaces()
       return
     }
@@ -137,8 +126,4 @@ const save = async (value) => {
     workspaceStore.alert_msg = 'Unable to save workspace data.'
   }
 }
-
-watch(workspaceid, () => {
-  getWorkspace()
-})
 </script>
