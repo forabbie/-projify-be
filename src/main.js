@@ -7,6 +7,7 @@ import App from './App.vue'
 import router from './router'
 
 import VeeValidatePlugin from './plugins/validation'
+import 'flowbite'
 
 const app = createApp(App)
 

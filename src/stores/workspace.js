@@ -26,8 +26,8 @@ export default defineStore('workspace', {
       const result = await WorkspaceService.getUserWorkspaces()
       return result
     },
-    async getWorkspace(id) {
-      const result = await WorkspaceService.getWorkspace(id)
+    async getUserWorkspace(id) {
+      const result = await WorkspaceService.getUserWorkspace(id)
       return result.data
     },
     async editWorkspace(value) {

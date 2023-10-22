@@ -23,6 +23,8 @@ const Signup = () =>
 //   import(/* webpackChunkName: "DashboardChunk" */ '@/components/modules/TheDashboard.vue')
 const Workspace = () =>
   import(/* webpackChunkName: "WorkspaceChunk" */ '@/components/modules/workspace/TheWorkspace.vue')
+const Project = () =>
+  import(/* webpackChunkName: "WorkspaceChunk" */ '@/components/modules/project/TheProject.vue')
 
 const routes = [
   {
@@ -70,6 +72,11 @@ const routes = [
         path: '',
         name: 'Workspace',
         component: Workspace
+      },
+      {
+        path: 'project/:projectid',
+        name: 'Project',
+        component: Project
       }
     ]
   },

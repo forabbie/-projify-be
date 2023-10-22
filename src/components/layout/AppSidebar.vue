@@ -141,7 +141,12 @@
           class="flex justify-between items-center p-2 text-gray-900 transition duration-75 rounded-lg dark:text-white group"
         >
           <span class="font-bold">Your Boards</span>
-          <span class="rounded-lg p-1.5 cursor-pointer">
+          <span
+            v-show="projects.length != 0 && workspace.is_creator"
+            data-modal-target="projectModal"
+            data-modal-toggle="projectModal"
+            class="rounded-lg p-1.5 cursor-pointer"
+          >
             <svg
               class="flex-shrink-0 w-3 h-3 text-gray-500 transition duration-75 button dark:text-gray-100"
               aria-hidden="true"
@@ -159,36 +164,54 @@
             </svg>
           </span>
         </div>
-        <li>
-          <router-link
-            :to="{ path: '/' }"
-            class="flex items-center p-2 text-gray-900 transition duration-75 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white group"
-          >
-            <svg
-              class="flex-shrink-0 w-4 h-4 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="currentColor"
-              viewBox="0 0 20 18"
+        <div v-if="projects.length != 0">
+          <li v-for="(project, index) in projects" :key="index">
+            <router-link
+              :to="{ name: 'Project', params: { projectid: parseInt(project.id) } }"
+              class="flex items-center p-2 text-gray-900 transition duration-75 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white group"
             >
-              <path d="M18 0H6a2 2 0 0 0-2 2h14v12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2Z" />
-              <path
-                d="M14 4H2a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2ZM2 16v-6h12v6H2Z"
-              />
-            </svg>
-            <span class="ml-3">Components</span>
-          </router-link>
-        </li>
+              <svg
+                class="flex-shrink-0 w-4 h-4 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="currentColor"
+                viewBox="0 0 20 18"
+              >
+                <path d="M18 0H6a2 2 0 0 0-2 2h14v12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2Z" />
+                <path
+                  d="M14 4H2a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2ZM2 16v-6h12v6H2Z"
+                />
+              </svg>
+              <span class="ml-3">{{ project.title }}</span>
+            </router-link>
+          </li>
+        </div>
+        <button
+          v-show="projects.length == 0"
+          data-modal-target="projectModal"
+          data-modal-toggle="projectModal"
+          class="w-full text-center p-2 text-white transition duration-75 rounded-lg bg-blue-600 hover:bg-blue-800 dark:hover:bg-blue-700 dark:text-white group"
+        >
+          <span class="">Add Project</span>
+        </button>
       </ul>
     </div>
   </aside>
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted } from 'vue'
+import { initFlowbite } from 'flowbite'
 import useWorkspaceStore from '@/stores/workspace'
+import useProjectStore from '@/stores/project'
 
 const workspaceStore = useWorkspaceStore()
+const projectStore = useProjectStore()
 const workspaces = ref(computed(() => workspaceStore.workspaces))
 const workspace = ref(computed(() => workspaceStore.workspace))
+const projects = ref(computed(() => projectStore.projects))
+
+onMounted(() => {
+  initFlowbite()
+})
 </script>
