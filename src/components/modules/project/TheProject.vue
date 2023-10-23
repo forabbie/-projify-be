@@ -101,87 +101,21 @@
           id="createProductButton"
           class="mb-3 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
           type="button"
-          data-modal-target="taskModal"
-          data-modal-show="taskModal"
+          data-modal-target="taskAddModal"
+          data-modal-show="taskAddModal"
         >
           Add new task
         </button>
       </div>
-      <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-          <thead
-            class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
-          >
-            <tr>
-              <th scope="col" class="px-6 py-3">Taks</th>
-              <th scope="col" class="px-6 py-3">Owner</th>
-              <th scope="col" class="px-6 py-3">Due Date</th>
-              <th scope="col" class="px-6 py-3">Status</th>
-              <th scope="col" class="px-6 py-3">Priority</th>
-              <th scope="col" class="px-6 py-3">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              v-for="(task, index) in 4"
-              :key="index"
-              class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-            >
-              <td
-                class="p-4 text-sm font-normal text-gray-500 whitespace-nowrap dark:text-gray-400"
-              >
-                <div class="text-base font-semibold text-gray-900 dark:text-white">name</div>
-                <div class="text-sm font-normal text-gray-500 dark:text-gray-400">category</div>
-              </td>
-              <th
-                scope="row"
-                class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white"
-              >
-                <div
-                  class="relative inline-flex items-center justify-center w-10 h-10 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600"
-                >
-                  <span class="font-medium text-gray-600 dark:text-gray-300">JL</span>
-                </div>
-                <div class="pl-3">
-                  <div class="text-base font-semibold">Neil Sims</div>
-                  <div class="font-normal text-gray-500">neil.sims@flowbite.com</div>
-                </div>
-              </th>
-              <td class="px-6 py-4">React Developer</td>
-              <td class="p-4">
-                <span
-                  class="bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-md dark:bg-gray-700 dark:text-green-400 border border-green-100 dark:border-green-500"
-                  >Completed</span
-                >
-              </td>
-              <td class="px-6 py-4">
-                <div class="flex items-center">
-                  <div class="h-2.5 w-2.5 rounded-full bg-green-500 mr-2"></div>
-                  Online
-                </div>
-              </td>
-              <td class="px-6 py-4">
-                <!-- Modal toggle -->
-                <a
-                  href="#"
-                  type="button"
-                  data-modal-target="taskModal"
-                  data-modal-show="taskModal"
-                  class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                  >Edit task</a
-                >
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <!-- Edit task modal -->
-        <ModalTask id="taskModal" :data="{ data: '' }" />
-        <ModalPojectAddMember
-          id="projectAddMemberModal"
-          :data="{ member: '' }"
-          @onAction="addMember"
-        />
-      </div>
+      <TheTask />
+      <!-- Edit task modal -->
+      <ModalTask id="taskAddModal" :data="emptyTask" action="New" @onAction="save" />
+      <ModalTask id="taskEditModal" :data="task" action="Edit" @onAction="save" />
+      <ModalPojectAddMember
+        id="projectAddMemberModal"
+        :data="{ member: '' }"
+        @onAction="addMember"
+      />
     </div>
   </div>
 </template>
@@ -191,12 +125,15 @@ import { initFlowbite } from 'flowbite'
 import { useRoute } from 'vue-router'
 import { computed, onMounted, ref } from 'vue'
 import { getUserWorkspaces, getUserWorkspace } from '@/utils/workspace.utils'
+import { getTasks } from '@/utils/task.utils'
 import { getWorkspaceMembers } from '@/utils/member.utils'
 import useProjectStore from '@/stores/project'
 import useMemberStore from '@/stores/member'
 import useWorkspaceStore from '@/stores/workspace'
+import useTaskStore from '@/stores/task'
 import ModalTask from '@/components/modules/task/modal/ModalTask.vue'
 import ModalPojectAddMember from '@/components/modules/project/modal/ModalPojectAddMember.vue'
+import TheTask from '@/components/modules/task/TheTask.vue'
 import ButtonDots from '@/components/elements/ButtonDots.vue'
 import DropdownAction from '@/components/modules/project/dropdown/DropdownAction.vue'
 
@@ -205,9 +142,24 @@ onMounted(() => {
 })
 
 const route = useRoute()
-const workspaceid = ref(computed(() => route.params.workspaceid))
+const taskStore = useTaskStore()
 const workspaceStore = useWorkspaceStore()
+const workspaceid = ref(computed(() => route.params.workspaceid))
 const workspace = ref(computed(() => workspaceStore.workspace))
+const emptyTask = ref({
+  id: null,
+  title: null,
+  description: null,
+  notes: null,
+  owner: '',
+  project_id: null,
+  deadline: null,
+  status: 1,
+  priority: 1,
+  owner_email: null,
+  name: null
+})
+const task = ref(computed(() => taskStore.task))
 
 const memberStore = useMemberStore()
 const projectStore = useProjectStore()
@@ -238,6 +190,36 @@ const addMember = async (id) => {
     memberStore.submission = false
     memberStore.alert_variant = 'bg-red-500'
     memberStore.alert_msg = 'Unable to save workspace data.'
+  }
+}
+
+const save = async (value, action) => {
+  const data = {}
+  data.id = task.value.id
+  data.title = value.title
+  data.description = value.description
+  data.owner = value.owner
+  data.deadline = value.deadline
+  data.task_status_id = value.status
+  data.task_priority_id = value.priority
+  data.notes = value.notes
+  data.project_id = projectid.value
+  data.workspaceid = workspaceid.value
+  data.projectid = projectid.value
+  taskStore.show_alert = true
+  taskStore.submission = true
+  taskStore.alert_variant = 'bg-blue-500'
+  taskStore.alert_msg = 'Please be patient while we save your data.'
+  try {
+    action == 'New' ? await taskStore.addTask(data) : await taskStore.editTask(data)
+    taskStore.alert_variant = 'bg-green-500'
+    taskStore.alert_msg = 'Task has been successfully updated.'
+    getTasks(workspaceid, projectid)
+  } catch (error) {
+    console.log(error)
+    taskStore.submission = false
+    taskStore.alert_variant = 'bg-red-500'
+    taskStore.alert_msg = 'Unable to save task data.'
   }
 }
 </script>
