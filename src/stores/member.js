@@ -5,9 +5,9 @@ export default defineStore('member', {
   state: () => {
     return {
       members: [{}],
-      schema: {
-        recipient: 'required'
-      },
+      // schema: {
+      //   member: 'required'
+      // },
       submission: false,
       show_alert: false,
       alert_variant: 'bg-blue-500',

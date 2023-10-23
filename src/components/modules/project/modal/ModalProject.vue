@@ -123,7 +123,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, onUnmounted, ref } from 'vue'
 import FieldInput from '@/components/elements/FieldInput.vue'
 import FieldInputGroup from '@/components/elements/FieldInputGroup.vue'
 import FieldInputLabel from '@/components/elements/FieldInputLabel.vue'
@@ -163,4 +163,9 @@ const onsave = (value) => {
   // console.log(isEdit)
   emit('onAction', value, props.thisAction)
 }
+
+onUnmounted(() => {
+  projectStore.show_alert = false
+  projectStore.submission = false
+})
 </script>

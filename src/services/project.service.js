@@ -58,15 +58,15 @@ class ProjectService {
   }
   addUserToProject(value) {
     return api
-      .get(`workspaces/${value.workspaceid}/projects/${value.project}/add-member`, {
-        params: {
-          user_id: value.userid
-        },
-        role: value.role,
-        headers: {
-          Authorization: getToken()
+      .post(
+        `workspaces/${value.workspaceid}/projects/${value.projectid}/add-member?user_id=${value.user_id}`,
+        {
+          role: 'member',
+          headers: {
+            Authorization: getToken()
+          }
         }
-      })
+      )
       .then((response) => {
         return response.data
       })
