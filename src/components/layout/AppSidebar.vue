@@ -187,13 +187,19 @@
           </li>
         </div>
         <button
-          v-show="projects.length == 0"
+          v-show="projects.length == 0 && workspace.is_creator"
           data-modal-target="projectModal"
           data-modal-toggle="projectModal"
           class="w-full text-center p-2 text-white transition duration-75 rounded-lg bg-blue-600 hover:bg-blue-800 dark:hover:bg-blue-700 dark:text-white group"
         >
           <span class="">Add Project</span>
         </button>
+        <div
+          v-if="projects.length == 0 && !workspace.is_creator"
+          class="text-center p-2 text-gray-900 transition duration-75 rounded-lg bg-gray-100 dark:bg-gray-700 dark:text-white group"
+        >
+          No projects
+        </div>
       </ul>
     </div>
   </aside>
