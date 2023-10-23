@@ -1,8 +1,6 @@
 <template>
   <div class="hidden" id="members" role="tabpanel" aria-labelledby="members-tab">
-    <div
-      class="mb-4 bg-white rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 dark:bg-gray-800"
-    >
+    <div class="mb-4 bg-white rounded-lg 2xl:col-span-2 dark:border-gray-700 dark:bg-gray-800">
       <div class="flow-root overflow-auto h-96">
         <ul class="mb-6 divide-y divide-gray-200 dark:divide-gray-700">
           <li v-for="(member, index) in members" :key="index" class="py-4">
@@ -34,22 +32,10 @@
                 v-if="member.is_creator"
                 class="inline-flex items-center w-auto xl:w-full 2xl:w-auto"
               >
-                <svg
-                  class="w-6 text-sm font-medium text-center text-blue-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:ring-blue-300 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
+                <span
+                  class="bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
+                  >Owner</span
                 >
-                  <path
-                    fill="currentColor"
-                    d="m18.774 8.245-.892-.893a1.5 1.5 0 0 1-.437-1.052V5.036a2.484 2.484 0 0 0-2.48-2.48H13.7a1.5 1.5 0 0 1-1.052-.438l-.893-.892a2.484 2.484 0 0 0-3.51 0l-.893.892a1.5 1.5 0 0 1-1.052.437H5.036a2.484 2.484 0 0 0-2.48 2.481V6.3a1.5 1.5 0 0 1-.438 1.052l-.892.893a2.484 2.484 0 0 0 0 3.51l.892.893a1.5 1.5 0 0 1 .437 1.052v1.264a2.484 2.484 0 0 0 2.481 2.481H6.3a1.5 1.5 0 0 1 1.052.437l.893.892a2.484 2.484 0 0 0 3.51 0l.893-.892a1.5 1.5 0 0 1 1.052-.437h1.264a2.484 2.484 0 0 0 2.481-2.48V13.7a1.5 1.5 0 0 1 .437-1.052l.892-.893a2.484 2.484 0 0 0 0-3.51Z"
-                  />
-                  <path
-                    fill="#fff"
-                    d="M8 13a1 1 0 0 1-.707-.293l-2-2a1 1 0 1 1 1.414-1.414l1.42 1.42 5.318-3.545a1 1 0 0 1 1.11 1.664l-6 4A1 1 0 0 1 8 13Z"
-                  />
-                </svg>
               </div>
               <div
                 v-if="member.status == 'pending'"
@@ -58,6 +44,15 @@
                 <span
                   class="bg-yellow-100 text-yellow-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-yellow-900 dark:text-yellow-300"
                   >Pending</span
+                >
+              </div>
+              <div
+                v-if="member.status !== 'pending' && !member.is_creator"
+                class="inline-flex items-center w-auto xl:w-full 2xl:w-auto"
+              >
+                <span
+                  class="bg-green-100 text-green-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300"
+                  >Accepted</span
                 >
               </div>
             </div>

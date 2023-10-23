@@ -88,14 +88,6 @@
                 <FieldInputLabel label="Owner (optional)" label_for="input-task-owner" />
               </template>
               <template #field>
-                <!-- <FieldInput
-                  :data="data.owner"
-                  type="text"
-                  name="task-owner"
-                  id="input-task-owner"
-                  placeholder=""
-                  :class="inputTextClass"
-                /> -->
                 <select
                   v-model="member"
                   id="input-owner"
@@ -103,8 +95,8 @@
                   class="block w-full py-2 px-3 text-gray-800 border border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded"
                 >
                   <option value="">Select the owner</option>
-                  <option v-for="(item, index) in members" :key="index" :value="item.user?.id">
-                    {{ item.user?.email }}
+                  <option v-for="(member, index) in members" :key="index" :value="member?.id">
+                    {{ member?.email }}
                   </option>
                 </select>
               </template>
@@ -159,14 +151,6 @@
                   <FieldInputLabel label="Priority" label_for="input-task-priority" />
                 </template>
                 <template #field>
-                  <!-- <FieldInput
-                    :data="data.priority"
-                    type="text"
-                    name="task-priority"
-                    id="input-task-priority"
-                    placeholder=""
-                    :class="inputTextClass"
-                  /> -->
                   <select
                     v-model="priority"
                     id="input-priority"
@@ -226,15 +210,14 @@ import FieldInput from '@/components/elements/FieldInput.vue'
 import FieldInputGroup from '@/components/elements/FieldInputGroup.vue'
 import FieldInputLabel from '@/components/elements/FieldInputLabel.vue'
 import useTaskStore from '@/stores/task'
-import useMemberStore from '@/stores/member'
 
 const emit = defineEmits(['onAction'])
 
-const memberStore = useMemberStore()
 const taskStore = useTaskStore()
 const props = defineProps({
   id: String,
   data: Object,
+  members: Object,
   label: String,
   onAction: Function,
   action: String
@@ -256,17 +239,11 @@ const show_alert = ref(computed(() => taskStore.show_alert))
 const alert_variant = ref(computed(() => taskStore.alert_variant))
 const alert_msg = ref(computed(() => taskStore.alert_msg))
 
-const members = ref(computed(() => memberStore.members))
 const priorities = ref(computed(() => taskStore.priorities))
 const statuses = ref(computed(() => taskStore.statuses))
 const member = ref(data.value?.owner)
 const status = ref(data.value?.status)
 const priority = ref(data.value?.priority)
-// const member = ref(props.action == 'New' ? props.data?.owner : computed(() => props.data?.owner))
-// const status = ref(props.action == 'New' ? props.data?.status : computed(() => props.data?.status))
-// const priority = ref(
-//   props.action == 'New' ? props.data?.priority : computed(() => props.data?.priority)
-// )
 
 const onsave = (value) => {
   const action = props.action

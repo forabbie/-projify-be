@@ -94,7 +94,6 @@ const emit = defineEmits(['onAction'])
 
 const props = defineProps({
   id: String,
-  data: Object,
   label: String,
   onAction: Function
 })
@@ -108,7 +107,9 @@ const member = ref('')
 
 const members = ref(
   computed(() => {
-    const members = memberStore.members.filter((item) => item.role !== 'admin')
+    const members = memberStore.members.filter(
+      (item) => item.role !== 'admin' && item.status !== 'pending'
+    )
     return members
   })
 )
@@ -118,6 +119,14 @@ const alert_variant = ref(computed(() => memberStore.alert_variant))
 const alert_msg = ref(computed(() => memberStore.alert_msg))
 
 const onsave = () => {
+  // console.log(member.value)
   emit('onAction', member)
 }
+
+// watch(member, (newValue, oldValue) => {
+//   if (newValue !== oldValue) {
+//     // member.value = newValue
+//   }
+//   console.log(newValue)
+// })
 </script>

@@ -40,8 +40,8 @@
               <div class="font-normal text-gray-500">{{ task.owner_email }}</div>
             </div>
           </th>
-          <td class="px-6 py-4">{{ task.deadline }}</td>
-          <td class="p-4">
+          <td class="px-6 py-4 whitespace-nowrap">{{ task.deadline }}</td>
+          <td class="p-4 whitespace-nowrap">
             <span
               :class="statusColorClass(task.status)"
               class="text-xs font-medium mr-2 px-2.5 py-0.5 rounded-md border"
@@ -65,7 +65,7 @@
               {{ convertPriority(task.priority) }}
             </div>
           </td>
-          <td class="px-6 py-4">
+          <td class="px-6 py-4 whitespace-nowrap">
             <a
               href="#"
               type="button"

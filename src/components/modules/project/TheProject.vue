@@ -60,12 +60,12 @@
                 your project stands.
               </p>
             </div>
-            <div v-show="workspace.is_creator">
+            <div v-show="workspace.is_creator" class="whitespace-nowrap">
               <button
                 data-modal-target="projectAddMemberModal"
                 data-modal-show="projectAddMemberModal"
                 type="button"
-                class="text-gray-900 bg-white hover:bg-gray-100 border border-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg text-sm px-4 py-1.5 text-center inline-flex items-center dark:focus:ring-gray-600 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700 mr-2"
+                class="text-gray-900 bg-white hover:bg-gray-100 border border-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg text-sm px-4 py-1.5 text-center inline-flex items-center dark:focus:ring-gray-600 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700 ml-2"
               >
                 <svg
                   class="w-4 h-4 mr-2 -ml-1"
@@ -109,13 +109,21 @@
       </div>
       <TheTask />
       <!-- Edit task modal -->
-      <ModalTask id="taskAddModal" :data="emptyTask" action="New" @onAction="save" />
-      <ModalTask id="taskEditModal" :data="task" action="Edit" @onAction="save" />
-      <ModalPojectAddMember
-        id="projectAddMemberModal"
-        :data="{ member: '' }"
-        @onAction="addMember"
+      <ModalTask
+        id="taskAddModal"
+        :data="emptyTask"
+        :members="project?.members"
+        action="New"
+        @onAction="save"
       />
+      <ModalTask
+        id="taskEditModal"
+        :data="task"
+        :members="project?.members"
+        action="Edit"
+        @onAction="save"
+      />
+      <ModalPojectAddMember id="projectAddMemberModal" @onAction="addMember" />
     </div>
   </div>
 </template>
