@@ -7,7 +7,6 @@
     data-modal-backdrop="static"
   >
     <div class="relative w-full max-w-md max-h-full">
-      <!-- Modal content -->
       <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
         <button
           type="button"

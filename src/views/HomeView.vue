@@ -17,6 +17,7 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { initFlowbite } from 'flowbite'
 import useWorkspaceStore from '@/stores/workspace'
 import useProjectStore from '@/stores/project'
+import useTaskStore from '@/stores/task'
 import NavbarComponent from '@/components/layout/AppNavbar.vue'
 import SidebarComponent from '@/components/layout/AppSidebar.vue'
 
@@ -25,6 +26,7 @@ import ModalProject from '@/components/modules/project/modal/ModalProject.vue'
 const route = useRoute()
 const workspaceStore = useWorkspaceStore()
 const projectStore = useProjectStore()
+const taskStore = useTaskStore()
 const project = ref(computed(() => projectStore.project))
 const workspaceid = ref(computed(() => route.params.workspaceid))
 const projectid = ref(computed(() => route.params.projectid))
@@ -70,6 +72,22 @@ const getUserProject = async () => {
     const result = await projectStore.getUserProject(data)
     if (result) {
       projectStore.project = result.project[0]
+      getTasks()
+      return
+    }
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+const getTasks = async () => {
+  const data = {}
+  data.workspaceid = workspaceid.value
+  data.projectid = projectid.value
+  try {
+    const result = await taskStore.getTasks(data)
+    if (result) {
+      taskStore.tasks = result.data
       return
     }
   } catch (error) {
