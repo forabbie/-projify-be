@@ -31,8 +31,10 @@
           <span class="sr-only">Close modal</span>
         </button>
         <div class="px-6 py-6 lg:px-8">
-          <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">Invite user</h3>
-          <vee-form class="mt-8 space-y-6" :validation-schema="schema" @submit="onsave">
+          <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">
+            Add user to project
+          </h3>
+          <vee-form class="mt-8 space-y-6" @submit="onsave">
             <div
               class="text-white text-center font-bold p-4 mb-4"
               v-if="show_alert"
@@ -42,20 +44,23 @@
             </div>
             <FieldInputGroup>
               <template #label>
-                <FieldInputLabel label="Email" label_for="input-recipient" />
+                <FieldInputLabel label="Project Member" label_for="input-member" />
               </template>
               <template #field>
-                <FieldInput
-                  :data="data.recipient_email"
-                  type="text"
-                  name="recipient"
-                  id="input-recipient"
-                  placeholder="workspace@example.com"
-                  :class="inputTextClass"
-                />
+                <select
+                  v-model="member"
+                  id="input-member"
+                  name="member"
+                  class="block w-full py-2 px-3 text-gray-800 border border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded"
+                >
+                  <option value="">Select a member</option>
+                  <option v-for="(item, index) in members" :key="index" :value="item.user?.id">
+                    {{ item.user?.email }}
+                  </option>
+                </select>
               </template>
               <template #error>
-                <ErrorMessage class="text-red-600" name="recipient" />
+                <ErrorMessage class="text-red-600" name="member" />
               </template>
             </FieldInputGroup>
             <button
@@ -64,7 +69,7 @@
               style="transition: all 0.15s ease 0s"
               :disabled="submission"
             >
-              Invite
+              Add
             </button>
           </vee-form>
         </div>
@@ -74,31 +79,37 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
-import FieldInput from '@/components/elements/FieldInput.vue'
+import { computed, onMounted, ref } from 'vue'
+import { useRoute } from 'vue-router'
+import { getWorkspaceMembers } from '@/utils/member.utils'
 import FieldInputGroup from '@/components/elements/FieldInputGroup.vue'
 import FieldInputLabel from '@/components/elements/FieldInputLabel.vue'
 import useMemberStore from '@/stores/member'
 
+const route = useRoute()
+const workspaceid = ref(computed(() => route.params.workspaceid))
+const memberStore = useMemberStore()
+
 const emit = defineEmits(['onAction'])
 
-const memberStore = useMemberStore()
 const props = defineProps({
   id: String,
   data: Object,
   label: String,
   onAction: Function
 })
+
+onMounted(() => {
+  getWorkspaceMembers(workspaceid)
+})
+
 const id = ref(props.id)
-// const member = ref(props.data)
+const member = ref('')
 
-const inputTextClass = ref(
-  'bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
-)
-
-const schema = ref(
+const members = ref(
   computed(() => {
-    return memberStore.schema
+    const members = memberStore.members.filter((item) => item.role !== 'admin')
+    return members
   })
 )
 const submission = ref(computed(() => memberStore.submission))
@@ -106,7 +117,7 @@ const show_alert = ref(computed(() => memberStore.show_alert))
 const alert_variant = ref(computed(() => memberStore.alert_variant))
 const alert_msg = ref(computed(() => memberStore.alert_msg))
 
-const onsave = (value) => {
-  emit('onAction', value)
+const onsave = () => {
+  emit('onAction', member)
 }
 </script>

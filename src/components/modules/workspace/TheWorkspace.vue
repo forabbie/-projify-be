@@ -25,7 +25,7 @@
             </li>
           </ul>
           <button
-            v-if="workspace.is_creator"
+            v-show="workspace.is_creator"
             type="button"
             data-modal-target="invite-member-modal"
             data-modal-toggle="invite-member-modal"
@@ -65,6 +65,7 @@ import { initFlowbite } from 'flowbite'
 import { useRoute } from 'vue-router'
 import { computed, onMounted, ref, watch } from 'vue'
 import { getUserWorkspaces, getUserWorkspace } from '@/utils/workspace.utils'
+import { getWorkspaceMembers } from '@/utils/member.utils'
 import TheMembers from '@/components/modules/member/TheMembers.vue'
 import WorkspaceHeader from '@/components/modules/workspace/WorkspaceHeader.vue'
 import ModalWorkspace from '@/components/modules/workspace/modal/ModalWorkspace.vue'
@@ -74,7 +75,7 @@ import useMemberStore from '@/stores/member'
 
 onMounted(() => {
   initFlowbite()
-  getWorkspaceMembers()
+  getWorkspaceMembers(workspaceid)
 })
 
 const route = useRoute()
@@ -128,7 +129,7 @@ const invite = async (value) => {
       memberStore.alert_msg = 'Successfully sent invite.'
       getUserWorkspace(workspaceid)
       getUserWorkspaces()
-      getWorkspaceMembers()
+      getWorkspaceMembers(workspaceid)
       return
     }
   } catch (error) {
@@ -139,19 +140,7 @@ const invite = async (value) => {
   }
 }
 
-const getWorkspaceMembers = async () => {
-  try {
-    const result = await memberStore.getWorkspaceMembers(workspaceid.value)
-    if (result) {
-      memberStore.members = result.members
-      return
-    }
-  } catch (error) {
-    console.log(error)
-  }
-}
-
 watch(url, () => {
-  getWorkspaceMembers()
+  getWorkspaceMembers(workspaceid)
 })
 </script>

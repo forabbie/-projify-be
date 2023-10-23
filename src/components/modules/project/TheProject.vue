@@ -23,7 +23,7 @@
                         d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"
                       ></path>
                     </svg>
-                    Workspace
+                    {{ workspace.name }}
                   </a>
                 </li>
                 <li>
@@ -60,8 +60,10 @@
                 your project stands.
               </p>
             </div>
-            <div class="">
+            <div v-show="workspace.is_creator">
               <button
+                data-modal-target="projectAddMemberModal"
+                data-modal-show="projectAddMemberModal"
                 type="button"
                 class="text-gray-900 bg-white hover:bg-gray-100 border border-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg text-sm px-4 py-1.5 text-center inline-flex items-center dark:focus:ring-gray-600 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700 mr-2"
               >
@@ -80,7 +82,7 @@
                     d="M13 8h6m-3 3V5m-6-.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0ZM5 11h3a4 4 0 0 1 4 4v2H1v-2a4 4 0 0 1 4-4Z"
                   />
                 </svg>
-                Invite / {{ project?.members?.length }}
+                Add / {{ project?.members?.length }}
               </button>
               <!-- Dropdown -->
               <ButtonDots
@@ -173,7 +175,12 @@
           </tbody>
         </table>
         <!-- Edit task modal -->
-        <ModalTask id="taskModal" :data="workspace" @onAction="save" />
+        <ModalTask id="taskModal" :data="{ data: '' }" />
+        <ModalPojectAddMember
+          id="projectAddMemberModal"
+          :data="{ member: '' }"
+          @onAction="addMember"
+        />
       </div>
     </div>
   </div>
@@ -184,9 +191,12 @@ import { initFlowbite } from 'flowbite'
 import { useRoute } from 'vue-router'
 import { computed, onMounted, ref } from 'vue'
 import { getUserWorkspaces, getUserWorkspace } from '@/utils/workspace.utils'
-import useWorkspaceStore from '@/stores/workspace'
+import { getWorkspaceMembers } from '@/utils/member.utils'
 import useProjectStore from '@/stores/project'
+import useMemberStore from '@/stores/member'
+import useWorkspaceStore from '@/stores/workspace'
 import ModalTask from '@/components/modules/task/modal/ModalTask.vue'
+import ModalPojectAddMember from '@/components/modules/project/modal/ModalPojectAddMember.vue'
 import ButtonDots from '@/components/elements/ButtonDots.vue'
 import DropdownAction from '@/components/modules/project/dropdown/DropdownAction.vue'
 
@@ -195,36 +205,39 @@ onMounted(() => {
 })
 
 const route = useRoute()
+const workspaceid = ref(computed(() => route.params.workspaceid))
 const workspaceStore = useWorkspaceStore()
 const workspace = ref(computed(() => workspaceStore.workspace))
-const workspaceid = ref(computed(() => route.params.workspaceid))
 
+const memberStore = useMemberStore()
 const projectStore = useProjectStore()
 const project = ref(computed(() => projectStore.project))
+const projectid = ref(computed(() => route.params.projectid))
 
-const save = async (value) => {
+const addMember = async (id) => {
   const data = {}
-  data.name = value['workspace-name']
-  data.description = value['workspace-description']
-  data.id = workspaceid.value
-  workspaceStore.show_alert = true
-  workspaceStore.submission = true
-  workspaceStore.alert_variant = 'bg-blue-500'
-  workspaceStore.alert_msg = 'Please be patient while we save your data.'
+  data.user_id = id.value
+  data.workspaceid = workspaceid.value
+  data.projectid = projectid.value
+  memberStore.show_alert = true
+  memberStore.submission = true
+  memberStore.alert_variant = 'bg-blue-500'
+  memberStore.alert_msg = 'Please be patient while we save your data.'
   try {
-    const result = await workspaceStore.editWorkspace(data)
+    const result = await projectStore.addUserToProject(data)
     if (result) {
-      workspaceStore.alert_variant = 'bg-green-500'
-      workspaceStore.alert_msg = 'Workspace has been successfully updated.'
+      memberStore.alert_variant = 'bg-green-500'
+      memberStore.alert_msg = 'Workspace has been successfully updated.'
       getUserWorkspace(workspaceid)
       getUserWorkspaces()
+      getWorkspaceMembers(workspaceid)
       return
     }
   } catch (error) {
     console.log(error)
-    workspaceStore.submission = false
-    workspaceStore.alert_variant = 'bg-red-500'
-    workspaceStore.alert_msg = 'Unable to save workspace data.'
+    memberStore.submission = false
+    memberStore.alert_variant = 'bg-red-500'
+    memberStore.alert_msg = 'Unable to save workspace data.'
   }
 }
 </script>
